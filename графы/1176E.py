@@ -1,0 +1,42 @@
+# самая долгая задача
+import sys
+from collections import deque
+input = sys.stdin.readline
+
+t = int(input())
+for _ in range(t):
+    n, m = map(int, input().split())
+    dir_points = {}
+    visited = [0] + [False]*n
+    colors = [0] + [False]*n
+    for i in range(m): # собираем точки в словарь, где ключ - точка, а значение - список точек, с которыми она соединена
+        new_n,new_m = map(int,input().split())
+        dir_points.setdefault(new_n, []).append(new_m)
+        dir_points.setdefault(new_m, []).append(new_n)
+
+    queue = deque([1])
+    visited[1] = True
+    while queue: # проходим в ширину по графу и красим точки в два цвета, если они соединены
+        s = queue.popleft()
+        for i in dir_points[s]:
+            if not visited[i]:
+                colors[i] = 1 - colors[s]
+                visited[i] = True
+                queue.append(i)
+
+    answer = [x[0] for x in enumerate(colors) if x[1] == False][1:]
+    zero = [x for x in range(1, n + 1) if colors[x] == 0]
+    one = [x for x in range(1, n + 1) if colors[x] == 1]
+    answer = zero if len(zero) <= len(one) else one
+
+    print(len(answer))
+    print(' '.join(map(str, answer)))
+
+# 1
+# 6 6
+# 1 2
+# 2 3
+# 3 1
+# 1 4
+# 4 5
+# 5 6
